@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>管理系统</title>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="themes/default/easyui.css"
+        />
+        <link rel="stylesheet" type="text/css" href="themes/icon.css" />
+        <style>
+            div.logo {
+                background: #0099cc;
+                color: white;
+                height: 80px;
+            }
+            div.nav {
+                width: 200px;
+                background: #293038;
+            }
+            div.nav > ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            div.nav > ul > li {
+                height: 40px;
+                line-height: 40px;
+                font-size: 16px;
+                text-align: center;
+                color: white;
+            }
+            div.nav > ul > li:hover {
+                background: #43515e;
+                cursor: pointer;
+            }
+            .login-info {
+                float: right;
+            }
+            .logo > h1 {
+                float: left;
+            }
+        </style>
+    </head>
+    <body class="easyui-layout">
+        <div class="logo" data-options="region:'north'"><h1>管理系统</h1></div>
+        <div id="nav" class="nav" data-options="region:'west'">
+            <ul>
+                <li data-type="students">学生管理</li>
+                <li data-type="classes">班级管理</li>
+                <li data-type="teachers">老师管理</li>
+            </ul>
+        </div>
+        <div
+            id="studentsTabs"
+            class="easyui-tabs"
+            data-options="region:'center'"
+            style="padding:5px;background:#eee;"
+        ></div>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+        <script>
+            $("#nav li").click(function() {
+                let selectType = $(this).attr("data-type");
+                let selectTitle = $(this).text();
+                if ($("#studentsTabs").tabs("exists", selectTitle)) {
+                    $("#studentsTabs").tabs("select", selectTitle)
+                } else {
+                    $("#studentsTabs").tabs("add", {
+                        title: selectTitle,
+                        href: selectType + ".html",
+                        closable: true,
+                        onLoad:function(){
+                            window[selectType]();
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

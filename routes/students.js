@@ -4,8 +4,12 @@ const db = require("ykt-mongo");
 
 //查询所有
 router.get("/",function(req,res){
-    let {page,rows} = req.query;
-    db.collection("students").findByPage(page,rows,{},function(data){
+    let {page,rows,type,value} = req.query;
+    let option = {};
+    if(type && value){
+        option = {[type]:{$regex:value}}
+    }
+    db.collection("students").findByPage(page,rows,option,function(data){
         res.send(data);
     });
 });
