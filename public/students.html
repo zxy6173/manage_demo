@@ -5,9 +5,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>学生管理</title>
-
     </head>
     <body>
+        <style>
+            .addHeadImg {
+                width: 90px;
+                height: 120px;
+                border: 1px solid red;
+                position: absolute;
+                right: 20px;
+                top: 40px;
+            }
+            .addHeadImg > img {
+                width: 90px;
+                height: 120px;
+            }
+        </style>
         <a
             id="studentsAddBtn"
             class="easyui-linkbutton"
@@ -40,7 +53,7 @@
                         class="easyui-textbox"
                         id="addName"
                         name="addName"
-                        style="width:100%"
+                        style="width:70%"
                         data-options="label:'姓名:'"
                     />
                 </div>
@@ -49,7 +62,7 @@
                         class="easyui-textbox"
                         id="addAge"
                         name="addAge"
-                        style="width:100%"
+                        style="width:70%"
                         data-options="label:'年龄:'"
                     />
                 </div>
@@ -64,6 +77,23 @@
                         <option value="男">男</option>
                         <option value="女">女</option>
                     </select>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-filebox"
+                        name="addStudentFile"
+                        style="width:200px"
+                        data-options="label:'上传头像:'"
+                    />
+                    <a
+                        class="easyui-linkbutton"
+                        id="addStudentUploadBtn"
+                        data-options="iconCls:'icon-add'"
+                    ></a>
+                </div>
+                <div class="addHeadImg">
+                    <img src="images/no-image.png" />
+                    <input type="hidden" id="addHeadImgPath" />
                 </div>
             </form>
         </div>
@@ -111,151 +141,168 @@
         </div>
 
         <div id="studentsParent"><table id="studentsTable"></table></div>
-       
-        <script>
-            function students(){
 
-            
-            $("#studentsTable").datagrid({
-                method: "get",
-                url: "/students",
-                pagination: true,
-                pageList: [5, 10, 15, 20, 25],
-                pageSize: 5,
-                columns: [
-                    [
-                        { field: "name", title: "姓名", width: 100 },
-                        { field: "gender", title: "性别", width: 100 },
-                        { field: "age", title: "年龄", width: 100 },
-                        {
-                            field: "operate",
-                            title: "操作",
-                            width: 200,
-                            formatter: function(value, row, index) {
-                                return `<a class="easyui-linkbutton update-btn" data-options="iconCls:'icon-edit'" data-id="${
-                                    row._id
-                                }">修改</a>
+        <script>
+            function students() {
+                $("#studentsTable").datagrid({
+                    method: "get",
+                    url: "/students",
+                    pagination: true,
+                    pageList: [5, 10, 15, 20, 25],
+                    pageSize: 5,
+                    columns: [
+                        [
+                            { field: "name", title: "姓名", width: 100 },
+                            { field: "gender", title: "性别", width: 100 },
+                            { field: "age", title: "年龄", width: 100 },
+                            {
+                                field: "operate",
+                                title: "操作",
+                                width: 200,
+                                formatter: function(value, row, index) {
+                                    return `<a class="easyui-linkbutton update-btn" data-options="iconCls:'icon-edit'" data-id="${
+                                        row._id
+                                    }">修改</a>
                                                                 <a class="easyui-linkbutton del-btn" data-id="${
                                                                     row._id
                                                                 }" data-options="iconCls:'icon-remove'">删除</a>`;
+                                }
+                            }
+                        ]
+                    ],
+                    onLoadSuccess: function() {
+                        $.parser.parse("#studentsParent");
+                    }
+                });
+                $("#studentsAddBtn").click(function() {
+                    $("#studentsAddDialog").dialog("open");
+                });
+                // 初始化增加窗口
+                $("#studentsAddDialog").dialog({
+                    buttons: [
+                        {
+                            text: "保存",
+                            handler: function() {
+                                $("#studentsAddDialog").dialog("close");
+                                let addName = $("#addName").val();
+                                let addAge = $("#addAge").val();
+                                let addGender = $("#addGender").val();
+                                let addHeadImg = $("#addHeadImgPath").val();
+                                $.ajax({
+                                    type: "post",
+                                    url: "/students",
+                                    data: {
+                                        name: addName,
+                                        age: addAge,
+                                        gender: addGender,
+                                        headImg:addHeadImg
+                                    },
+                                    success: function() {
+                                        show();
+                                        $("#studentsAddForm").form("clear");
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            text: "关闭",
+                            handler: function() {
+                                $("#studentsAddDialog").dialog("close");
                             }
                         }
                     ]
-                ],
-                onLoadSuccess: function() {
-                    $.parser.parse("#studentsParent");
-                }
-            });
-            $("#studentsAddBtn").click(function() {
-                $("#studentsAddDialog").dialog("open");
-            });
-            // 初始化增加窗口
-            $("#studentsAddDialog").dialog({
-                buttons: [
-                    {
-                        text: "保存",
-                        handler: function() {
-                            $("#studentsAddDialog").dialog("close");
-                            let addName = $("#addName").val();
-                            let addAge = $("#addAge").val();
-                            let addGender = $("#addGender").val();
-                            $.ajax({
-                                type: "post",
-                                url: "/students",
-                                data: {
-                                    name: addName,
-                                    age: addAge,
-                                    gender: addGender
-                                },
-                                success: function() {
-                                    show();
-                                    $("#studentsAddForm").form("clear");
-                                }
-                            });
-                        }
-                    },
-                    {
-                        text: "关闭",
-                        handler: function() {
-                            $("#studentsAddDialog").dialog("close");
-                        }
-                    }
-                ]
-            });
+                });
 
-            // 初始化修改窗口
-            $("#studentsUpdateDialog").dialog({
-                buttons: [
-                    {
-                        text: "保存",
-                        handler: function() {
-                            let id = $("#updateId").val();
-                            let updateName = $("#updateName").val();
-                            let updateAge = $("#updateAge").val();
-                            let updateGender = $("#updateGender").val();
+                // 初始化修改窗口
+                $("#studentsUpdateDialog").dialog({
+                    buttons: [
+                        {
+                            text: "保存",
+                            handler: function() {
+                                let id = $("#updateId").val();
+                                let updateName = $("#updateName").val();
+                                let updateAge = $("#updateAge").val();
+                                let updateGender = $("#updateGender").val();
+                                $.ajax({
+                                    type: "put",
+                                    url: "/students/" + id,
+                                    data: {
+                                        name: updateName,
+                                        age: updateAge,
+                                        gender: updateGender
+                                    },
+                                    success: function() {
+                                        $("#studentsUpdateDialog").dialog(
+                                            "close"
+                                        );
+                                        $("#studentsUpdateForm").form("clear");
+                                        show();
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            text: "关闭",
+                            handler: function() {
+                                $("#studentsUpdateDialog").dialog("close");
+                            }
+                        }
+                    ]
+                });
+                $("#studentsParent").on("click", ".del-btn", function() {
+                    let id = $(this).attr("data-id");
+                    console.log("id", id);
+                    $.messager.confirm("消息", "是否确认删除？", function(r) {
+                        if (r) {
                             $.ajax({
-                                type: "put",
+                                type: "delete",
                                 url: "/students/" + id,
-                                data: {
-                                    name: updateName,
-                                    age: updateAge,
-                                    gender: updateGender
-                                },
                                 success: function() {
-                                    $("#studentsUpdateDialog").dialog("close");
-                                    $("#studentsUpdateForm").form("clear");
                                     show();
                                 }
                             });
                         }
-                    },
-                    {
-                        text: "关闭",
-                        handler: function() {
-                            $("#studentsUpdateDialog").dialog("close");
+                    });
+                });
+                $("#studentsParent").on("click", ".update-btn", function() {
+                    let id = $(this).attr("data-id");
+                    $("#studentsUpdateDialog").dialog("open");
+                    $.ajax({
+                        type: "get",
+                        url: "/students/" + id,
+                        success: function(data) {
+                            $("#updateId").val(id);
+                            $("#updateName").textbox("setValue", data.name);
+                            $("#updateAge").textbox("setValue", data.age);
+                            $("#updateGender").combobox(
+                                "setValue",
+                                data.gender
+                            );
                         }
-                    }
-                ]
-            });
-            $("#studentsParent").on("click", ".del-btn", function() {
-                let id = $(this).attr("data-id");
-                console.log("id", id);
-                $.messager.confirm("消息", "是否确认删除？", function(r) {
-                    if (r) {
-                        $.ajax({
-                            type: "delete",
-                            url: "/students/" + id,
-                            success: function() {
-                                show();
-                            }
-                        });
+                    });
+                });
+                $("#studentsSearch").searchbox({
+                    searcher: function(value, type) {
+                        console.log(value, type);
+                        show(value, type);
                     }
                 });
-            });
-            $("#studentsParent").on("click", ".update-btn", function() {
-                let id = $(this).attr("data-id");
-                $("#studentsUpdateDialog").dialog("open");
-                $.ajax({
-                    type: "get",
-                    url: "/students/" + id,
-                    success: function(data) {
-                        $("#updateId").val(id);
-                        $("#updateName").textbox("setValue", data.name);
-                        $("#updateAge").textbox("setValue", data.age);
-                        $("#updateGender").combobox("setValue", data.gender);
-                    }
+
+                $("#addStudentUploadBtn").click(function() {
+                    $.ajaxFileUpload({
+                        url: "/upload",
+                        dataType: "string",
+                        fileElementId: $("[name=addStudentFile]").attr("id"),
+                        success: function(path) {
+                            $(".addHeadImg>img").attr("src", "/upload/" + path);
+                            $("#addHeadImgPath").val(path);
+                        }
+                    });
                 });
-            });
-            $("#studentsSearch").searchbox({
-                searcher:function(value,type){
-                    console.log(value,type);
-                    show(value,type);
+                function show(value, type) {
+                    $("#studentsTable").datagrid("reload", { type, value });
                 }
-            });
-            function show(value,type) {
-                $("#studentsTable").datagrid("reload",{type,value});
             }
-        }
         </script>
     </body>
 </html>

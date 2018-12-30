@@ -24,8 +24,8 @@ router.get("/:id",function(req,res){
 
 //增加学生
 router.post("/",function(req,res){
-    let {name,age,gender} = req.body;
-    db.collection("students").insert({name,age,gender},function(data){
+    let {name,age,gender,headImg} = req.body;
+    db.collection("students").insert({name,age,gender,headImg},function(data){
         res.send(data);
     });
 });
