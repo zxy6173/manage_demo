@@ -24,6 +24,7 @@ router.post("/login",function(req,res){
     let {phone,pwd} = req.body;
     db.collection("users").find({phone,pwd},function(data){
         if(data.length > 0){
+            req.session.user = data[0];
             res.send({
                 status:1
             });
