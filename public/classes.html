@@ -85,6 +85,17 @@
                         data-options="label:'开班时间:'"
                     />
                 </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateClassesCount"
+                        name="updateClassesCount"
+                        style="width:100%"
+                        data-options="label:'班级人数:'"
+                        disabled
+                    />
+                </div>
+                
                 
             </form>
         </div>
@@ -103,6 +114,7 @@
                         [
                             { field: "name", title: "班级名称", width: 100 },
                             { field: "date", title: "开班时间", width: 100 },
+                            { field: "count", title: "班级人数", width: 100 },
                             {
                                 field: "operate",
                                 title: "操作",
@@ -166,12 +178,14 @@
                                 let id = $("#updateClassesId").val();
                                 let updateName = $("#updateClassesName").val();
                                 let updateDate = $("#updateClassesDate").val();
+                                let updateCount = $("#updateClassesCount").val();
                                 $.ajax({
                                     type: "put",
                                     url: "/classes/" + id,
                                     data: {
                                         name: updateName,
-                                        date: updateDate
+                                        date: updateDate,
+                                        count:updateCount
                                     },
                                     success: function() {
                                         $("#classesUpdateDialog").dialog(
@@ -216,6 +230,7 @@
                             $("#updateClassesId").val(id);
                             $("#updateClassesName").textbox("setValue", data.name);
                             $("#updateClassesDate").textbox("setValue", data.date);
+                            $("#updateClassesCount").textbox("setValue", data.count);
                         }
                     });
                 });

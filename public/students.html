@@ -79,6 +79,17 @@
                     </select>
                 </div>
                 <div style="margin-bottom:20px">
+                    <select
+                        id="addTheirClasses"
+                        class="easyui-combobox"
+                        name="addTheirClasses"
+                        style="width:200px;"
+                        data-options="label:'选择所属班级:',url:'/classes',method:'get',textField:'name',valueField:'_id'"
+                    >
+                        
+                    </select>
+                </div>
+                <div style="margin-bottom:20px">
                     <input
                         class="easyui-filebox"
                         name="addStudentFile"
@@ -137,6 +148,15 @@
                         <option value="女">女</option>
                     </select>
                 </div>
+                <select
+                        id="updateTheirClasses"
+                        class="easyui-combobox"
+                        name="updateTheirClasses"
+                        style="width:200px;"
+                        data-options="label:'选择所属班级:',url:'/classes',method:'get',textField:'name',valueField:'_id'"
+                    >
+                        
+                    </select>
             </form>
         </div>
 
@@ -155,6 +175,12 @@
                             { field: "name", title: "姓名", width: 100 },
                             { field: "gender", title: "性别", width: 100 },
                             { field: "age", title: "年龄", width: 100 },
+                            { field: "classes", title: "所属班级", width: 100,
+                            formatter:function(value, row, index){
+                                console.log(value, row, index);
+                                return value && value.name
+                            }    
+                        },
                             {
                                 field: "operate",
                                 title: "操作",
@@ -188,6 +214,8 @@
                                 let addAge = $("#addAge").val();
                                 let addGender = $("#addGender").val();
                                 let addHeadImg = $("#addHeadImgPath").val();
+                                let addTheirClasses = $("#addTheirClasses").combobox("getValue");
+                                
                                 $.ajax({
                                     type: "post",
                                     url: "/students",
@@ -195,6 +223,7 @@
                                         name: addName,
                                         age: addAge,
                                         gender: addGender,
+                                        classesId:addTheirClasses,
                                         headImg:addHeadImg
                                     },
                                     success: function() {
@@ -223,13 +252,15 @@
                                 let updateName = $("#updateName").val();
                                 let updateAge = $("#updateAge").val();
                                 let updateGender = $("#updateGender").val();
+                                let updateTheirClasses = $("#updateTheirClasses").combobox("getValue");
                                 $.ajax({
                                     type: "put",
                                     url: "/students/" + id,
                                     data: {
                                         name: updateName,
                                         age: updateAge,
-                                        gender: updateGender
+                                        gender: updateGender,
+                                        classesId:updateTheirClasses
                                     },
                                     success: function() {
                                         $("#studentsUpdateDialog").dialog(
@@ -277,6 +308,10 @@
                             $("#updateGender").combobox(
                                 "setValue",
                                 data.gender
+                            );
+                            $("#updateTheirClasses").combobox(
+                                "setValue",
+                                data.classes.$id
                             );
                         }
                     });
