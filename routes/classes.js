@@ -45,6 +45,9 @@ router.delete("/:id",async function(req,res){
 
 //改变班级人数
 const changeClassesCount = async function(id,increment){
+    if(!id){
+        return;
+    }
     //根据ID查询班级
     let classesData = await client.get("/classes/"+id);   
     //根据传递的参数对该班级的人数进行增(正数)或减(负数)

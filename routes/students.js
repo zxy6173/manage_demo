@@ -35,7 +35,8 @@ router.post("/",async function(req,res){
     // db.collection("students").insert({name,age,gender,headImg},function(data){
     //     res.send(data);
     // });
-    let data = await client.post("/students",{name,age,gender,headImg,classes:{$id:classesId,$ref:"classes"}});
+    let data = await client.post("/students",{name,age,gender,headImg,classes:{$ref:"classes",$id:classesId}});
+    //当增加学生时，如果设定了所属班级，则该班级的人数加1
     await changeClassesCount(classesId,1);
     res.send(data);
 });
@@ -48,12 +49,14 @@ router.put("/:id",async function(req,res){
     // db.collection("students").update({_id:db.ObjectID(id)},{name,age,gender},function(data){
     //     res.send(data);
     // });
+    //获取当前要修改的学生信息，目的是为了得到该学生所属的班级id
     let studentData = await client.get("/students/"+id);
     let data = await client.put("/students/"+id,{name,age,gender,classes:{$ref:"classes",$id:classesId}});
-    if(studentData.classes){
-        console.log("studentData.classes",studentData.classes);
+    //如果要修改该学生所在班级，则先将他原属班级的人数减1
+    if(studentData.classes && studentData.classes.$id){
         await changeClassesCount(studentData.classes.$id,-1);
     }
+    //将新修改的所属班级人数加1
     await changeClassesCount(classesId,1);
     
     res.send(data);
@@ -65,7 +68,13 @@ router.delete("/:id",async function(req,res){
     // db.collection("students").remove({_id:db.ObjectID(id)},function(data){
     //     res.send(data);
     // });
+    let studentData = await client.get("/students/"+id);
+    //删除学生时，如果该学生有所属班级，则该班级的人数减1
+    if(studentData.classes && studentData.classes.$id){
+        await changeClassesCount(studentData.classes.$id,-1);
+    }
     let data = await client.delete("/students/"+id);
+    
     res.send(data);
 });
 
