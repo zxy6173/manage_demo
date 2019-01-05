@@ -5,15 +5,230 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>班级管理</title>
-        
     </head>
     <body>
-        <h1>班级管理</h1>
-        
+        <style>
+           
+        </style>
+        <a
+            id="classesAddBtn"
+            class="easyui-linkbutton"
+            data-options="iconCls:'icon-add'"
+            >增加</a
+        >
+
+        <input
+            id="classesSearch"
+            class="easyui-searchbox"
+            style="width:300px"
+            data-options="prompt:'请输入查询的条件',menu:'#classesSearchMenu'"
+        />
+
+        <div id="classesSearchMenu" style="width:120px">
+            <div data-options="name:'name'">班级名称</div>
+            <div data-options="name:'date'">开班时间</div>
+        </div>
+        <div
+            id="classesAddDialog"
+            class="easyui-dialog"
+            title="增加班级"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="classesAddForm" method="post">
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="addClassesName"
+                        name="addClassesName"
+                        style="width:70%"
+                        data-options="label:'班级名称:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-datebox"
+                        id="addClassesDate"
+                        name="addClassesDate"
+                        style="width:70%"
+                        data-options="label:'开班时间:'"
+                    />
+                </div>
+               
+            </form>
+        </div>
+
+        <div
+            id="classesUpdateDialog"
+            class="easyui-dialog"
+            title="修改班级"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="classesUpdateForm" method="post">
+                <input type="hidden" id="updateClassesId" />
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateClassesName"
+                        name="updateClassesName"
+                        style="width:100%"
+                        data-options="label:'班级名称:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-datebox"
+                        id="updateClassesDate"
+                        name="updateClassesDate"
+                        style="width:100%"
+                        data-options="label:'开班时间:'"
+                    />
+                </div>
+                
+            </form>
+        </div>
+
+        <div id="classesParent"><table id="classesTable"></table></div>
+
         <script>
-           function classes(){
-               console.log("teachers");
-           }
+            function classes() {
+                $("#classesTable").datagrid({
+                    method: "get",
+                    url: "/classes",
+                    pagination: true,
+                    pageList: [5, 10, 15, 20, 25],
+                    pageSize: 5,
+                    columns: [
+                        [
+                            { field: "name", title: "班级名称", width: 100 },
+                            { field: "date", title: "开班时间", width: 100 },
+                            {
+                                field: "operate",
+                                title: "操作",
+                                width: 200,
+                                formatter: function(value, row, index) {
+                                    return `<a class="easyui-linkbutton update-btn" data-options="iconCls:'icon-edit'" data-id="${
+                                        row._id
+                                    }">修改</a>
+                                                                <a class="easyui-linkbutton del-btn" data-id="${
+                                                                    row._id
+                                                                }" data-options="iconCls:'icon-remove'">删除</a>`;
+                                }
+                            }
+                        ]
+                    ],
+                    onLoadSuccess: function() {
+                        $.parser.parse("#classesParent");
+                    }
+                });
+                $("#classesAddBtn").click(function() {
+                    $("#classesAddDialog").dialog("open");
+                });
+                // 初始化增加窗口
+                $("#classesAddDialog").dialog({
+                    buttons: [
+                        {
+                            text: "保存",
+                            handler: function() {
+                                $("#classesAddDialog").dialog("close");
+                                let addName = $("#addClassesName").val();
+                                let addDate = $("#addClassesDate").val();
+                                $.ajax({
+                                    type: "post",
+                                    url: "/classes",
+                                    data: {
+                                        name: addName,
+                                        date: addDate
+                                    },
+                                    success: function() {
+                                        show();
+                                        $("#classesAddForm").form("clear");
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            text: "关闭",
+                            handler: function() {
+                                $("#classesAddDialog").dialog("close");
+                            }
+                        }
+                    ]
+                });
+
+                // 初始化修改窗口
+                $("#classesUpdateDialog").dialog({
+                    buttons: [
+                        {
+                            text: "保存",
+                            handler: function() {
+                                let id = $("#updateClassesId").val();
+                                let updateName = $("#updateClassesName").val();
+                                let updateDate = $("#updateClassesDate").val();
+                                $.ajax({
+                                    type: "put",
+                                    url: "/classes/" + id,
+                                    data: {
+                                        name: updateName,
+                                        date: updateDate
+                                    },
+                                    success: function() {
+                                        $("#classesUpdateDialog").dialog(
+                                            "close"
+                                        );
+                                        $("#classesUpdateForm").form("clear");
+                                        show();
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            text: "关闭",
+                            handler: function() {
+                                $("#classesUpdateDialog").dialog("close");
+                            }
+                        }
+                    ]
+                });
+                $("#classesParent").on("click", ".del-btn", function() {
+                    let id = $(this).attr("data-id");
+                    console.log("id", id);
+                    $.messager.confirm("消息", "是否确认删除？", function(r) {
+                        if (r) {
+                            $.ajax({
+                                type: "delete",
+                                url: "/classes/" + id,
+                                success: function() {
+                                    show();
+                                }
+                            });
+                        }
+                    });
+                });
+                $("#classesParent").on("click", ".update-btn", function() {
+                    let id = $(this).attr("data-id");
+                    $("#classesUpdateDialog").dialog("open");
+                    $.ajax({
+                        type: "get",
+                        url: "/classes/" + id,
+                        success: function(data) {
+                            $("#updateClassesId").val(id);
+                            $("#updateClassesName").textbox("setValue", data.name);
+                            $("#updateClassesDate").textbox("setValue", data.date);
+                        }
+                    });
+                });
+                $("#classesSearch").searchbox({
+                    searcher: function(value, type) {
+                        show(value, type);
+                    }
+                });
+
+                function show(value, type) {
+                    $("#classesTable").datagrid("reload", { type, value });
+                }
+            }
         </script>
     </body>
 </html>
