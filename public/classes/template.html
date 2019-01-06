@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>班级管理</title>
+    </head>
+    <body>
+        <style>
+           
+        </style>
+        <a
+            id="classesAddBtn"
+            class="easyui-linkbutton"
+            data-options="iconCls:'icon-add'"
+            >增加</a
+        >
+
+        <input
+            id="classesSearch"
+            class="easyui-searchbox"
+            style="width:300px"
+            data-options="prompt:'请输入查询的条件',menu:'#classesSearchMenu'"
+        />
+
+        <div id="classesSearchMenu" style="width:120px">
+            <div data-options="name:'name'">班级名称</div>
+            <div data-options="name:'date'">开班时间</div>
+        </div>
+        <div
+            id="classesAddDialog"
+            class="easyui-dialog"
+            title="增加班级"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="classesAddForm" method="post">
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="addClassesName"
+                        name="addClassesName"
+                        style="width:70%"
+                        data-options="label:'班级名称:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-datebox"
+                        id="addClassesDate"
+                        name="addClassesDate"
+                        style="width:70%"
+                        data-options="label:'开班时间:'"
+                    />
+                </div>
+               
+            </form>
+        </div>
+
+        <div
+            id="classesUpdateDialog"
+            class="easyui-dialog"
+            title="修改班级"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="classesUpdateForm" method="post">
+                <input type="hidden" id="updateClassesId" />
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateClassesName"
+                        name="updateClassesName"
+                        style="width:100%"
+                        data-options="label:'班级名称:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-datebox"
+                        id="updateClassesDate"
+                        name="updateClassesDate"
+                        style="width:100%"
+                        data-options="label:'开班时间:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateClassesCount"
+                        name="updateClassesCount"
+                        style="width:100%"
+                        data-options="label:'班级人数:'"
+                        disabled
+                    />
+                </div>
+                
+                
+            </form>
+        </div>
+
+        <div id="classesParent"><table id="classesTable"></table></div>
+
+    </body>
+</html>

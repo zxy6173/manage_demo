@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>学生管理</title>
+    </head>
+    <body>
+        <style>
+            .addHeadImg {
+                width: 90px;
+                height: 120px;
+                border: 1px solid red;
+                position: absolute;
+                right: 20px;
+                top: 40px;
+            }
+            .addHeadImg > img {
+                width: 90px;
+                height: 120px;
+            }
+        </style>
+        <a
+            id="studentsAddBtn"
+            class="easyui-linkbutton"
+            data-options="iconCls:'icon-add'"
+            >增加</a
+        >
+
+        <input
+            id="studentsSearch"
+            class="easyui-searchbox"
+            style="width:300px"
+            data-options="prompt:'请输入查询的条件',menu:'#studentsSearchMenu'"
+        />
+
+        <div id="studentsSearchMenu" style="width:120px">
+            <div data-options="name:'name'">姓名</div>
+            <div data-options="name:'gender'">性别</div>
+            <div data-options="name:'age'">年龄</div>
+        </div>
+        <div
+            id="studentsAddDialog"
+            class="easyui-dialog"
+            title="增加学生"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="studentsAddForm" method="post">
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="addName"
+                        name="addName"
+                        style="width:70%"
+                        data-options="label:'姓名:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="addAge"
+                        name="addAge"
+                        style="width:70%"
+                        data-options="label:'年龄:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <select
+                        id="addGender"
+                        class="easyui-combobox"
+                        name="addGender"
+                        style="width:200px;"
+                        data-options="label:'性别:'"
+                    >
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:20px">
+                    <select
+                        id="addTheirClasses"
+                        class="easyui-combobox"
+                        name="addTheirClasses"
+                        style="width:200px;"
+                        data-options="label:'选择所属班级:',url:'/classes',method:'get',textField:'name',valueField:'_id'"
+                    >
+                        
+                    </select>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-filebox"
+                        name="addStudentFile"
+                        style="width:200px"
+                        data-options="label:'上传头像:'"
+                    />
+                    <a
+                        class="easyui-linkbutton"
+                        id="addStudentUploadBtn"
+                        data-options="iconCls:'icon-add'"
+                    ></a>
+                </div>
+                <div class="addHeadImg">
+                    <img src="images/no-image.png" />
+                    <input type="hidden" id="addHeadImgPath" />
+                </div>
+            </form>
+        </div>
+
+        <div
+            id="studentsUpdateDialog"
+            class="easyui-dialog"
+            title="修改学生"
+            style="width:450px;height:300px;"
+            data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true"
+        >
+            <form id="studentsUpdateForm" method="post">
+                <input type="hidden" id="updateId" />
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateName"
+                        name="updateName"
+                        style="width:100%"
+                        data-options="label:'姓名:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <input
+                        class="easyui-textbox"
+                        id="updateAge"
+                        name="updateAge"
+                        style="width:100%"
+                        data-options="label:'年龄:'"
+                    />
+                </div>
+                <div style="margin-bottom:20px">
+                    <select
+                        id="updateGender"
+                        class="easyui-combobox"
+                        name="updateGender"
+                        style="width:200px;"
+                        data-options="label:'性别:'"
+                    >
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <select
+                        id="updateTheirClasses"
+                        class="easyui-combobox"
+                        name="updateTheirClasses"
+                        style="width:200px;"
+                        data-options="label:'选择所属班级:',url:'/classes',method:'get',textField:'name',valueField:'_id'"
+                    >
+                        
+                    </select>
+            </form>
+        </div>
+
+        <div id="studentsParent"><table id="studentsTable"></table></div>
+
+    </body>
+</html>
