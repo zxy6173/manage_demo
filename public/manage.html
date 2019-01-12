@@ -39,6 +39,8 @@
             }
             .login-info {
                 float: right;
+                margin-top: 50px;
+                margin-right: 50px;
             }
             .logo > h1 {
                 float: left;
@@ -46,7 +48,13 @@
         </style>
     </head>
     <body class="easyui-layout">
-        <div class="logo" data-options="region:'north'"><h1>管理系统</h1></div>
+        <div class="logo" data-options="region:'north'">
+            <h1>管理系统</h1>
+            <div class="login-info">
+                <span>手机号：</span><span id="phone"></span>
+                <input type="button" value="注销" />
+            </div>
+        </div>
         <div id="nav" class="nav" data-options="region:'west'">
             <ul>
                 <li data-type="students">学生管理</li>
@@ -63,17 +71,42 @@
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
         <script>
+            $(document).ajaxSend(function(event, request, settings) {
+                request.setRequestHeader(
+                    "authorization",
+                    "Bearer " + localStorage.token
+                );
+            });
+            $(document).ajaxComplete(function(event, response, settings) {
+                if (response.status == 401) {
+                    location.href = "login.html";
+                }
+            });
+            $.ajax({
+                type: "get",
+                url: "/getToken",
+                data: {
+                    token: localStorage.token
+                },
+                success: function(data) {
+                    $("#phone").text(data.phone);
+                }
+            });
+            $(".login-info>:button").click(function() {
+                delete localStorage.token;
+                location.href = "login.html";
+            });
             $("#nav li").click(function() {
                 let selectType = $(this).attr("data-type");
                 let selectTitle = $(this).text();
                 if ($("#studentsTabs").tabs("exists", selectTitle)) {
-                    $("#studentsTabs").tabs("select", selectTitle)
+                    $("#studentsTabs").tabs("select", selectTitle);
                 } else {
                     $("#studentsTabs").tabs("add", {
                         title: selectTitle,
                         href: selectType + ".html",
                         closable: true,
-                        onLoad:function(){
+                        onLoad: function() {
                             window[selectType]();
                         }
                     });

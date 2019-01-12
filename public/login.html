@@ -75,6 +75,7 @@
                             pwd:$("#pwd").val()
                         },success:function(data){
                             if(data.status == 1){
+                                localStorage.token = data.token;
                                 window.location = "manage.html"; 
                             }else{
                                 $.messager.alert('警告','用户名或密码错误');  
